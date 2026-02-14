@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 const fadeInUp = {
@@ -8,11 +9,6 @@ const fadeInUp = {
 
 const stagger = {
   visible: { transition: { staggerChildren: 0.2 } }
-}
-
-const float = {
-  y: [0, -20, 0],
-  transition: { duration: 3, repeat: Infinity, ease: "easeInOut" }
 }
 
 const FloatingShape = ({ className, delay = 0 }) => (
@@ -28,6 +24,36 @@ const FloatingShape = ({ className, delay = 0 }) => (
     }}
   />
 )
+
+const Typewriter = ({ text, delay = 0 }) => {
+  const [displayedText, setDisplayedText] = useState('')
+  
+  useEffect(() => {
+    let index = 0
+    const timer = setTimeout(() => {
+      const interval = setInterval(() => {
+        if (index <= text.length) {
+          setDisplayedText(text.slice(0, index))
+          index++
+        } else {
+          clearInterval(interval)
+        }
+      }, 80)
+      return () => clearInterval(interval)
+    }, delay * 1000)
+    return () => clearTimeout(timer)
+  }, [text, delay])
+  
+  return (
+    <span>
+      {displayedText}
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+      >|</motion.span>
+    </span>
+  )
+}
 
 function App() {
   return (
@@ -59,7 +85,7 @@ function App() {
           variants={stagger}
         >
           <motion.h1 variants={fadeInUp}>
-            Trasforma la tua <span>attività</span> digitale
+            <Typewriter text="La tua AI CHAT personalizzata" delay={0} />
           </motion.h1>
           <motion.p variants={fadeInUp}>
             La soluzione completa per far crescere il tuo business online. 
